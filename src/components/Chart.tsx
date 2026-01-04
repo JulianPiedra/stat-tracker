@@ -7,7 +7,6 @@ interface ChartProps {
 }
 
 const Chart: React.FC<ChartProps> = ({ playerStats }) => {
-    const [canvases, setCanvases] = useState<HTMLCanvasElement[]>([]);
 
     useEffect(() => {
         if (!playerStats) return;

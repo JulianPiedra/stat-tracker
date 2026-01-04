@@ -161,7 +161,6 @@ function App() {
               onSelectPlayer={setSelectedPlayer}
               onDeletePlayer={handleDeletePlayer}
               onEditPlayer={handleEditPlayer}
-              onImportPlayers={handleImportPlayers}
             />
           </div>
 

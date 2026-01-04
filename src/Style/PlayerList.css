@@ -3,10 +3,11 @@
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  height: 100%;
-  overflow-y: auto;
+  height: 85vh;
   position: relative;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .player-list-container.dragging {
@@ -16,6 +17,7 @@
 
 .player-list-header {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
@@ -30,6 +32,8 @@
 
 .import-export-buttons {
   display: flex;
+  justify-content: space-between;
+  width: 100%;
   gap: 8px;
 }
 
@@ -119,6 +123,9 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
+  overflow: auto;
+  padding-right: 6px;
 }
 
 .player-item {
@@ -132,7 +139,45 @@
   transition: all 0.2s ease;
   background-color: #4e46e5a8;
 }
+.filter-container {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
+.filter-button {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #111827;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.filter-button:hover {
+  border-color: #4f46e5;
+  color: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.filter-button.active {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.filter-summary {
+  font-size: 13px;
+  color: #4b5563;
+  margin-top: -4px;
+}
 .player-item:hover {
   border-color: #4f46e5;
   transform: translateX(4px);

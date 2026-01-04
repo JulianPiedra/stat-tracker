@@ -3,6 +3,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .chart-container h2 {
@@ -20,9 +21,15 @@
 }
 
 .charts-grid {
-  display: flex;
-  flex-direction: row;
-
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: center;
+  align-content: center;
+  justify-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
 }
 
 .chart-wrapper {
@@ -30,6 +37,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  min-height: 0;
 }
 
 .chart-wrapper h3 {
@@ -40,9 +48,12 @@
 }
 
 .chart-wrapper canvas {
-  width: fit-content;
-  height: fit-content;
+  width: 100%;
+  max-width: 450px;
+  height: 400px;
+  max-height: 400px;
   border-radius: 8px;
+  object-fit: contain;
 }
 
 @media (max-width: 1024px) {

@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import type { PlayerStats } from "../model/stats";
+import { useRef, useState } from "react";
+import { PositionColors, Positions, type PlayerStats } from "../model/stats";
 import "../Style/PlayerList.css";
 
 interface PlayerListProps {
@@ -8,7 +8,7 @@ interface PlayerListProps {
     onSelectPlayer: (player: PlayerStats) => void;
     onDeletePlayer: (playerName: string) => void;
     onEditPlayer: (player: PlayerStats) => void;
-    onImportPlayers: (players: PlayerStats[]) => void;
+    onImportPlayers?: (players: PlayerStats[]) => void;
 }
 
 const PlayerList: React.FC<PlayerListProps> = ({
@@ -17,10 +17,12 @@ const PlayerList: React.FC<PlayerListProps> = ({
     onSelectPlayer,
     onDeletePlayer,
     onEditPlayer,
-    onImportPlayers,
 }) => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [filter, setFilter] = useState<keyof typeof Positions | "">("");
 
+    const filteredPlayers = filter
+        ? players.filter((player) => player.position === filter)
+        : players;
     const handleExportJSON = () => {
         const dataStr = JSON.stringify(players, null, 2);
         const dataBlob = new Blob([dataStr], { type: "application/json" });
@@ -34,41 +36,16 @@ const PlayerList: React.FC<PlayerListProps> = ({
         URL.revokeObjectURL(url);
     };
 
-    const handleFileRead = (file: File) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const importedData = JSON.parse(e.target?.result as string);
-                if (Array.isArray(importedData)) {
-                    onImportPlayers(importedData);
-                } else {
-                    alert("Not a valid JSON format for players.");
-                }
-            } catch (error) {
-                alert("Error reading the JSON file. Please ensure the format is correct.");
-            }
-        };
-        reader.readAsText(file);
-    };
 
-    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files && files.length > 0) {
-            handleFileRead(files[0]);
-        }
-    };
 
-    const handleImportClick = () => {
-        fileInputRef.current?.click();
-    };
 
     return (
         <div className="player-list-container">
             <div className="player-list-header">
-                <h2>Saved players</h2>
                 <div className="import-export-buttons">
-                    <button 
-                        className="btn-export" 
+                    <h2>Saved players</h2>
+                    <button
+                        className="btn-export"
                         onClick={handleExportJSON}
                         disabled={players.length === 0}
                         title="Exportar jugadores a JSON"
@@ -76,13 +53,45 @@ const PlayerList: React.FC<PlayerListProps> = ({
                         ⬇ Export
                     </button>
                 </div>
+
+                <div className="filter-container">
+                    <button
+                        className={`filter-button ${filter === "" ? "active" : ""}`}
+                        onClick={() => setFilter("")}
+                        title="Show All Positions"
+                    >
+                        All
+                    </button>
+                    {Object.keys(Positions).map((posKey) => (
+                        <button
+                            key={posKey}
+                            className={`filter-button ${filter === posKey ? "active" : ""}`}
+                            style={{ backgroundColor: PositionColors[posKey as keyof typeof Positions] }}
+                            onClick={() => setFilter(posKey as keyof typeof Positions)}
+                            title={`Filter by ${Positions[posKey as keyof typeof Positions]}`}
+                        >
+                            {posKey}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="filter-summary">
+                    {filter === ""
+                        ? "Showing all positions"
+                        : ` ${filter} - ${Positions[filter]}`}
+                    {` (${filteredPlayers.length})`}
+                </div>
+
             </div>
 
             {players.length === 0 ? (
                 <p className="empty-message">No saved players. Add one!</p>
             ) : (
                 <div className="player-list">
-                    {players.map((player) => (
+                    {filteredPlayers.length === 0 && (
+                        <p className="empty-message">No players in this filter.</p>
+                    )}
+                    {filteredPlayers.map((player) => (
                         <div
                             key={player.name}
                             className={`player-item ${selectedPlayer?.name === player.name ? "active" : ""
@@ -91,6 +100,8 @@ const PlayerList: React.FC<PlayerListProps> = ({
                         >
                             <div className="player-info">
                                 <h3>{player.name}</h3>
+
+                                <h3 style={{ color: PositionColors[player.position as keyof typeof Positions] }}>{Positions[player.position]}</h3>
                                 <p className="player-stats">
 
                                     Score: {(
